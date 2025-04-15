@@ -1,6 +1,7 @@
+import 'package:app_absent/pages_app/absent_page.dart';
 import 'package:app_absent/services/auth_services.dart';
+import 'package:app_absent/services/user_services.dart';
 import 'package:flutter/material.dart';
-// import 'auth_services.dart'; // Import AuthService
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,45 +10,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final AuthService _authService = AuthService();
-  String _checkInMessage = '';
-  String _checkOutMessage = '';
+  final UserService _userService = UserService();
+  Map<String, dynamic> _profileData = {};
+  bool _isLoading = true;
 
-  Future<void> _checkIn() async {
-    try {
-      // Simulasi data lokasi dan alamat
-      final response = await _authService.checkIn(
-        '-6.2', // Latitude
-        '106.8', // Longitude
-        'Jakarta', // Alamat
-        'masuk', // Status
-      );
-
-      setState(() {
-        _checkInMessage = response['message'];
-      });
-    } catch (e) {
-      setState(() {
-        _checkInMessage = 'Gagal check-in: $e';
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile();
   }
 
-  Future<void> _checkOut() async {
+  Future<void> _fetchProfile() async {
     try {
-      // Simulasi data lokasi dan alamat
-      final response = await _authService.checkOut(
-        '-6.2', // Latitude
-        '106.8', // Longitude
-        'Jakarta', // Alamat
-      );
+      final token = await _userService.getToken();
+      if (token == null) {
+        Navigator.pushReplacementNamed(context, '/login');
+        return;
+      }
 
+      final response = await _authService.getProfile();
       setState(() {
-        _checkOutMessage = response['message'];
+        _profileData = response['data'];
+        _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _checkOutMessage = 'Gagal check-out: $e';
+        _isLoading = false;
       });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal memuat profil: $e')));
     }
   }
 
@@ -55,34 +47,56 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: <Widget>[
-            Text('Selamat datang!'),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: _checkIn, child: Text('Check-in')),
-            if (_checkInMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  _checkInMessage,
-                  style: TextStyle(color: Colors.green),
-                ),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text(
+                'Menu',
+                style: TextStyle(color: Colors.white, fontSize: 24),
               ),
-            SizedBox(height: 10),
-            ElevatedButton(onPressed: _checkOut, child: Text('Check-out')),
-            if (_checkOutMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  _checkOutMessage,
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Profil'),
+              onTap: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
           ],
         ),
       ),
+      body:
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Selamat Datang, ${_profileData['name']}!',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AbsenPage(),
+                            ),
+                          );
+                        },
+                        child: Text('Absen'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
     );
   }
 }

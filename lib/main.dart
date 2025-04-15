@@ -1,28 +1,29 @@
-import 'package:app_absent/pages_app/home_page.dart';
-import 'package:app_absent/pages_app/login_page.dart';
-import 'package:app_absent/pages_app/register_page.dart';
+import 'package:app_absent/pages_app/absent_page.dart';
 import 'package:flutter/material.dart';
+import 'pages_app/home_page.dart';
+import 'pages_app/profil_page.dart';
+import 'pages_app/edit_page.dart';
+import 'pages_app/login_page.dart';
+import 'pages_app/register_page.dart'; // Tambahkan import halaman registrasi
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Aplikasi Absensi',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      title: 'App Absen',
+      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
-        '/home': (context) => HomePage(), // Tambahkan rute home
+        '/home': (context) => HomePage(),
+        '/profile': (context) => ProfilePage(),
+        '/absen': (context) => AbsenPage(),
+        '/edit': (context) => EditProfilePage(),
+        '/register': (context) => RegisterPage(), // Tambahkan rute registrasi
       },
     );
   }
