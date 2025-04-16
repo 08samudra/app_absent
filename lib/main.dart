@@ -1,10 +1,17 @@
 import 'package:app_absent/pages_app/absent_page.dart';
+import 'package:app_absent/providers/absen_provider.dart';
+import 'package:app_absent/providers/edit_porfil_provider.dart';
+import 'package:app_absent/providers/home_provider.dart';
+import 'package:app_absent/providers/login_provider.dart';
+import 'package:app_absent/providers/profil_provider.dart';
+import 'package:app_absent/providers/register_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'pages_app/home_page.dart';
 import 'pages_app/profil_page.dart';
 import 'pages_app/edit_page.dart';
 import 'pages_app/login_page.dart';
-import 'pages_app/register_page.dart'; // Tambahkan import halaman registrasi
+import 'pages_app/register_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,18 +20,28 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'App Absen',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
-        '/profile': (context) => ProfilePage(),
-        '/absen': (context) => AbsenPage(),
-        '/edit': (context) => EditProfilePage(),
-        '/register': (context) => RegisterPage(), // Tambahkan rute registrasi
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AbsenProvider()),
+        ChangeNotifierProvider(create: (context) => EditProfileProvider()),
+        ChangeNotifierProvider(create: (context) => HomeProvider()),
+        ChangeNotifierProvider(create: (context) => LoginProvider()),
+        ChangeNotifierProvider(create: (context) => ProfileProvider()),
+        ChangeNotifierProvider(create: (context) => RegisterProvider()),
+      ],
+      child: MaterialApp(
+        title: 'App Absen',
+        theme: ThemeData(primarySwatch: Colors.blue),
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => LoginPage(),
+          '/home': (context) => HomePage(),
+          '/profile': (context) => ProfilePage(),
+          '/absen': (context) => AbsentPage(),
+          '/edit': (context) => EditProfilePage(),
+          '/register': (context) => RegisterPage(),
+        },
+      ),
     );
   }
 }

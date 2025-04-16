@@ -1,5 +1,7 @@
-import 'package:app_absent/services/auth_services.dart';
+// import 'package:app_absent/providers/edit_profile_provider.dart';
+import 'package:app_absent/providers/edit_porfil_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -9,26 +11,6 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final AuthService _authService = AuthService();
-
-  Future<void> _editProfile() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final response = await _authService.updateProfile(_nameController.text);
-        if (response['message'] == 'Profil berhasil diperbarui') {
-          Navigator.pop(context); // Kembali ke halaman profil
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(response['message'])));
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal memperbarui profil: $e')));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,21 +20,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nama'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama wajib diisi.';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: _editProfile, child: Text('Simpan')),
-            ],
+          child: Consumer<EditProfileProvider>(
+            builder: (context, editProfileProvider, child) {
+              return Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: 'Nama'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nama wajib diisi.';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed:
+                        editProfileProvider.isLoading
+                            ? null
+                            : () {
+                              if (_formKey.currentState!.validate()) {
+                                editProfileProvider.editProfile(
+                                  context,
+                                  _nameController.text,
+                                );
+                              }
+                            },
+                    child: Text('Simpan'),
+                  ),
+                  if (editProfileProvider.isLoading)
+                    CircularProgressIndicator(),
+                  if (editProfileProvider.message.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(editProfileProvider.message),
+                    ),
+                ],
+              );
+            },
           ),
         ),
       ),

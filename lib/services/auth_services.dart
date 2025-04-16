@@ -2,18 +2,15 @@ import 'dart:convert';
 import 'package:app_absent/services/user_services.dart';
 import 'package:http/http.dart' as http;
 import 'endpoint.dart';
-import 'login_model.dart';
+import '../model/login_model.dart';
+import 'auth_repository.dart';
 
 class AuthService {
   final UserService _userService = UserService();
+  final AuthRepository _authRepository = AuthRepository();
 
   Future<LoginResponse> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse(Endpoints.baseUrl + Endpoints.login),
-      body: {'email': email, 'password': password},
-    );
-
-    final loginResponse = LoginResponse.fromJson(json.decode(response.body));
+    final loginResponse = await _authRepository.login(email, password);
 
     if (loginResponse.data != null) {
       await _userService.saveToken(loginResponse.data!.token);
@@ -27,11 +24,7 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final response = await http.post(
-      Uri.parse(Endpoints.baseUrl + Endpoints.register),
-      body: {'name': name, 'email': email, 'password': password},
-    );
-    return json.decode(response.body);
+    return _authRepository.register(name, email, password);
   }
 
   Future<Map<String, dynamic>> checkIn(

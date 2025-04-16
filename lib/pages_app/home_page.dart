@@ -1,7 +1,7 @@
 import 'package:app_absent/pages_app/absent_page.dart';
-import 'package:app_absent/services/auth_services.dart';
-import 'package:app_absent/services/user_services.dart';
+import 'package:app_absent/providers/home_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,49 +9,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final AuthService _authService = AuthService();
-  final UserService _userService = UserService();
-  Map<String, dynamic> _profileData = {};
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    _fetchProfile();
-  }
-
-  Future<void> _fetchProfile() async {
-    try {
-      final token = await _userService.getToken();
-      if (token == null) {
-        Navigator.pushReplacementNamed(context, '/login');
-        return;
-      }
-
-      final response = await _authService.getProfile();
-      setState(() {
-        _profileData = response['data'];
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Gagal memuat profil: $e')));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<HomeProvider>(context, listen: false).fetchProfile(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
+      appBar: AppBar(title: const Text('Home')),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
               child: Text(
                 'Menu',
@@ -59,8 +33,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profil'),
+              leading: const Icon(Icons.person),
+              title: const Text('Profil'),
               onTap: () {
                 Navigator.pushNamed(context, '/profile');
               },
@@ -68,35 +42,46 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body:
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Selamat Datang, ${_profileData['name']}!',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AbsenPage(),
-                            ),
-                          );
-                        },
-                        child: Text('Absen'),
-                      ),
-                    ],
+      body: Consumer<HomeProvider>(
+        builder: (context, homeProvider, child) {
+          if (homeProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (homeProvider.errorMessage.isNotEmpty) {
+            return Center(child: Text('Error: ${homeProvider.errorMessage}'));
+          }
+
+          if (homeProvider.profileData.isEmpty) {
+            return const Center(child: Text('Data profil tidak tersedia.'));
+          }
+
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Selamat Datang, ${homeProvider.profileData['name']}!',
+                    style: const TextStyle(fontSize: 20),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AbsentPage()),
+                      );
+                    },
+                    child: const Text('Absen Check In'),
+                  ),
+                ],
               ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

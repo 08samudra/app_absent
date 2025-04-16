@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'endpoint.dart';
-import 'login_model.dart';
+import '../model/login_model.dart';
 
 class AuthRepository {
   Future<LoginResponse> login(String email, String password) async {
@@ -42,10 +42,6 @@ class AuthRepository {
         'status': status,
         if (alasanIzin != null) 'alasan_izin': alasanIzin,
       },
-      //  headers: {
-      //   'Accept': 'application/json',
-      //   'Authorization': 'Bearer ${Endpoints.token}',
-      // },
     );
     return json.decode(response.body);
   }
