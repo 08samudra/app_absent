@@ -1,0 +1,24 @@
+Dokumentasi: Logika Autentikasi Awal Aplikasi
+/// Kelas `SplashPage` berfungsi sebagai halaman pembuka aplikasi.
+/// Tugas utamanya adalah untuk memeriksa apakah token autentikasi pengguna
+/// tersimpan di perangkat. Berdasarkan keberadaan token, pengguna akan
+/// diarahkan langsung ke halaman utama (`HomePage`) jika token ada,
+/// atau ke halaman login (`LoginPage`) jika token tidak ada.
+///
+/// Penggunaan:
+/// - Pastikan `SplashPage` diatur sebagai `initialRoute` di `main.dart`.
+/// - `UserService` harus diimplementasikan dengan benar untuk menyimpan,
+///   membaca, dan menghapus token autentikasi menggunakan mekanisme
+///   persistent storage (contoh: `shared_preferences`).
+///
+/// Alur Kerja:
+/// 1. Saat `SplashPage` diinisialisasi (`initState`), fungsi `_checkAuth()` dipanggil.
+/// 2. `_checkAuth()` secara asynchronous memeriksa keberadaan token menggunakan `UserService.getToken()`.
+/// 3. Jika token tidak `null`, pengguna dianggap sudah login dan diarahkan ke `/home`.
+/// 4. Jika token `null`, pengguna dianggap belum login atau sudah logout dan diarahkan ke `/login`.
+///
+/// Catatan:
+/// - Delay singkat (`Future.delayed`) ditambahkan untuk memberikan kesan splash screen.
+///   Durasi delay dapat disesuaikan sesuai kebutuhan.
+/// - Pastikan logika penyimpanan token setelah login berhasil dan penghapusan token saat logout
+///   diimplementasikan di halaman `LoginPage` dan `HomePage` masing-masing.

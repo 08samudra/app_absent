@@ -39,6 +39,18 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+            //Dockumentasi untuk logout/stay app
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                await Provider.of<HomeProvider>(
+                  context,
+                  listen: false,
+                ).removeToken();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            ),
           ],
         ),
       ),

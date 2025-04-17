@@ -49,4 +49,8 @@ class HomeProvider with ChangeNotifier {
       setLoading(false);
     }
   }
+
+  Future<void> removeToken() async {
+    await _userService.removeToken();
+  }
 }

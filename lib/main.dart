@@ -1,4 +1,5 @@
 import 'package:app_absent/pages_app/absent_page.dart';
+import 'package:app_absent/pages_app/splash_page.dart';
 import 'package:app_absent/providers/absen_provider.dart';
 import 'package:app_absent/providers/edit_porfil_provider.dart';
 import 'package:app_absent/providers/home_provider.dart';
@@ -32,8 +33,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'App Absen',
         theme: ThemeData(primarySwatch: Colors.blue),
-        initialRoute: '/login',
+        initialRoute: '/splash',
+
         routes: {
+          '/splash': (context) => SplashPage(),
           '/login': (context) => LoginPage(),
           '/home': (context) => HomePage(),
           '/profile': (context) => ProfilePage(),

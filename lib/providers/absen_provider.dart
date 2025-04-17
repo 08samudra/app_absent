@@ -13,6 +13,14 @@ class AbsenProvider with ChangeNotifier {
   GoogleMapController? _mapController;
   String _message = '';
 
+  // Koordinat kantor (ganti dengan koordinat sebenarnya)
+  static const double kantorLatitude =
+      -6.210881; // Ganti dengan latitude kantor Anda
+  static const double kantorLongitude =
+      106.812942; // Ganti dengan longitude kantor Anda
+  static const double allowedRadius =
+      100; // Radius dalam meter (misalnya 100 meter)
+
   bool get isLoading => _isLoading;
   String get status => _status;
   String get alasanIzin => _alasanIzin;
@@ -50,14 +58,16 @@ class AbsenProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCurrentLocation() async {
+  Future<LatLng?> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       setCurrentLocation(LatLng(position.latitude, position.longitude));
+      return LatLng(position.latitude, position.longitude);
     } catch (e) {
       print('Error getting location: $e');
+      return null;
     }
   }
 
@@ -73,28 +83,38 @@ class AbsenProvider with ChangeNotifier {
       double checkInLng = position.longitude;
       String checkInAddress = 'Lokasi Tidak Diketahui';
 
-      Map<String, dynamic> response;
+      // Validasi jarak HANYA jika status adalah 'masuk'
       if (_status == 'masuk') {
-        response = await _authService.checkIn(
-          checkInLat.toString(),
-          checkInLng.toString(),
-          checkInAddress,
-          _status,
+        // Hitung jarak antara lokasi pengguna dan kantor
+        double distance = Geolocator.distanceBetween(
+          checkInLat,
+          checkInLng,
+          kantorLatitude,
+          kantorLongitude,
         );
-      } else {
-        if (_alasanIzin.isEmpty) {
-          setMessage('Alasan izin wajib diisi.');
+
+        // Validasi jarak
+        if (distance > allowedRadius) {
+          setMessage(
+            'Anda berada di luar radius absensi yang diperbolehkan (${allowedRadius} meter). Jarak Anda: ${distance.toStringAsFixed(2)} meter.',
+          );
           setLoading(false);
           return;
         }
-        response = await _authService.checkIn(
-          checkInLat.toString(),
-          checkInLng.toString(),
-          checkInAddress,
-          _status,
-          alasanIzin: _alasanIzin,
-        );
+      } else if (_status == 'izin' && _alasanIzin.isEmpty) {
+        setMessage('Alasan izin wajib diisi.');
+        setLoading(false);
+        return;
       }
+
+      Map<String, dynamic> response;
+      response = await _authService.checkIn(
+        checkInLat.toString(),
+        checkInLng.toString(),
+        checkInAddress,
+        _status,
+        alasanIzin: _status == 'izin' ? _alasanIzin : null,
+      );
 
       setMessage(response['message']);
     } catch (e) {

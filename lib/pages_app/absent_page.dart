@@ -9,10 +9,13 @@ class AbsentPage extends StatefulWidget {
 }
 
 class _AbsenPageState extends State<AbsentPage> {
+  Future<LatLng?>? _locationFuture;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<AbsenProvider>(context, listen: false).getCurrentLocation();
+    _locationFuture =
+        Provider.of<AbsenProvider>(context, listen: false).getCurrentLocation();
   }
 
   @override
@@ -25,25 +28,56 @@ class _AbsenPageState extends State<AbsentPage> {
           builder: (context, absenProvider, child) {
             return Column(
               children: <Widget>[
-                if (absenProvider.currentLocation != null)
-                  Expanded(
-                    flex: 2,
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: absenProvider.currentLocation!,
-                        zoom: 15,
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey, // Warna bingkai
+                        width: 1.0, // Lebar bingkai
                       ),
-                      markers: {
-                        Marker(
-                          markerId: MarkerId('currentLocation'),
-                          position: absenProvider.currentLocation!,
-                        ),
-                      },
-                      onMapCreated: (GoogleMapController controller) {
-                        absenProvider.setMapController(controller);
+                      borderRadius: BorderRadius.circular(
+                        8.0,
+                      ), // Optional: sudut melengkung
+                    ),
+                    child: FutureBuilder<LatLng?>(
+                      future: _locationFuture,
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot<LatLng?> snapshot,
+                      ) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Gagal mendapatkan lokasi: ${snapshot.error}',
+                            ),
+                          );
+                        } else if (snapshot.data != null) {
+                          return GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: snapshot.data!,
+                              zoom: 15,
+                            ),
+                            markers: {
+                              Marker(
+                                markerId: MarkerId('currentLocation'),
+                                position: snapshot.data!,
+                              ),
+                            },
+                            onMapCreated: (GoogleMapController controller) {
+                              absenProvider.setMapController(controller);
+                            },
+                          );
+                        } else {
+                          return Center(child: Text('Lokasi belum tersedia.'));
+                        }
                       },
                     ),
                   ),
+                ),
                 SizedBox(height: 16),
                 DropdownButton<String>(
                   value: absenProvider.status,
