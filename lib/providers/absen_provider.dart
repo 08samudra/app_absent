@@ -12,6 +12,9 @@ class AbsenProvider with ChangeNotifier {
   LatLng? _currentLocation;
   GoogleMapController? _mapController;
   String _message = '';
+  bool _isCheckOutLoading = false; // Tambahkan loading state untuk check out
+  String _checkOutMessage = ''; // Tambahkan pesan untuk check out
+  bool _isCheckOutEnabled = false; // State untuk mengontrol tombol check out
 
   // Koordinat kantor (ganti dengan koordinat sebenarnya)
   static const double kantorLatitude =
@@ -27,6 +30,9 @@ class AbsenProvider with ChangeNotifier {
   LatLng? get currentLocation => _currentLocation;
   GoogleMapController? get mapController => _mapController;
   String get message => _message;
+  bool get isCheckOutLoading => _isCheckOutLoading;
+  String get checkOutMessage => _checkOutMessage;
+  bool get isCheckOutEnabled => _isCheckOutEnabled;
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -58,15 +64,35 @@ class AbsenProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setCheckOutLoading(bool value) {
+    _isCheckOutLoading = value;
+    notifyListeners();
+  }
+
+  void setCheckOutMessage(String value) {
+    _checkOutMessage = value;
+    notifyListeners();
+  }
+
+  void setIsCheckOutEnabled(bool value) {
+    _isCheckOutEnabled = value;
+    notifyListeners();
+  }
+
   Future<LatLng?> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       setCurrentLocation(LatLng(position.latitude, position.longitude));
+      // Setelah mendapatkan lokasi, aktifkan tombol check out
+      setIsCheckOutEnabled(true);
       return LatLng(position.latitude, position.longitude);
     } catch (e) {
       print('Error getting location: $e');
+      setIsCheckOutEnabled(
+        false,
+      ); // Nonaktifkan tombol jika gagal mendapatkan lokasi
       return null;
     }
   }
@@ -117,10 +143,40 @@ class AbsenProvider with ChangeNotifier {
       );
 
       setMessage(response['message']);
+      // Setelah berhasil check in, mungkin perlu memperbarui UI atau state
     } catch (e) {
       setMessage('Terjadi kesalahan: $e');
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Tambahkan fungsi checkOutProcess
+  Future<void> checkOutProcess(BuildContext context) async {
+    setCheckOutLoading(true);
+    setCheckOutMessage(''); // Reset pesan check out
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      double checkOutLat = position.latitude;
+      double checkOutLng = position.longitude;
+      String checkOutAddress = 'Lokasi Tidak Diketahui';
+
+      final response = await _authService.checkOut(
+        checkOutLat.toString(),
+        checkOutLng.toString(),
+        checkOutAddress,
+      );
+
+      setCheckOutMessage(response['message']);
+      // Mungkin perlu memperbarui UI atau state setelah berhasil check out
+    } catch (e) {
+      setCheckOutMessage('Terjadi kesalahan saat check out: $e');
+    } finally {
+      setCheckOutLoading(false);
     }
   }
 }

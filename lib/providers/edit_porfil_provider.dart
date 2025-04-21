@@ -1,4 +1,4 @@
-// import 'package:app_absent/services/auth_service.dart';
+import 'package:app_absent/pages_app/profil_page.dart';
 import 'package:app_absent/services/auth_services.dart';
 import 'package:flutter/material.dart';
 
@@ -22,15 +22,22 @@ class EditProfileProvider with ChangeNotifier {
 
   Future<void> editProfile(BuildContext context, String name) async {
     setLoading(true);
+    setMessage('');
     try {
       final response = await _authService.updateProfile(name);
       setMessage(response['message']);
-      if (response['message'] == 'Profil berhasil diperbarui') {
-        Navigator.pop(context); // Kembali ke halaman profil
+      if (response['success'] == true) {
+        setLoading(false);
+        // Navigasi kembali ke ProfilePage setelah berhasil
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        setLoading(false);
       }
     } catch (e) {
       setMessage('Gagal memperbarui profil: $e');
-    } finally {
       setLoading(false);
     }
   }

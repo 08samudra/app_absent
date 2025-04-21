@@ -32,13 +32,8 @@ class _AbsenPageState extends State<AbsentPage> {
                   flex: 2,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, // Warna bingkai
-                        width: 1.0, // Lebar bingkai
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        8.0,
-                      ), // Optional: sudut melengkung
+                      border: Border.all(color: Colors.grey, width: 1.0),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: FutureBuilder<LatLng?>(
                       future: _locationFuture,
@@ -105,13 +100,31 @@ class _AbsenPageState extends State<AbsentPage> {
                       absenProvider.isLoading
                           ? null
                           : () => absenProvider.checkIn(context),
-                  child: Text('Absen'),
+                  child: Text('Absen Masuk'),
+                ),
+                SizedBox(height: 8),
+                // Tombol Check Out
+                ElevatedButton(
+                  onPressed:
+                      absenProvider.isCheckOutLoading ||
+                              !absenProvider.isCheckOutEnabled
+                          ? null
+                          : () => absenProvider.checkOutProcess(context),
+                  child:
+                      absenProvider.isCheckOutLoading
+                          ? CircularProgressIndicator()
+                          : Text('Absen Keluar'),
                 ),
                 if (absenProvider.isLoading) CircularProgressIndicator(),
                 if (absenProvider.message.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(absenProvider.message),
+                  ),
+                if (absenProvider.checkOutMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(absenProvider.checkOutMessage),
                   ),
               ],
             );

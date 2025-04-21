@@ -56,7 +56,7 @@ class _SplashPageState extends State<SplashPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const CircularProgressIndicator(),
+                // const CircularProgressIndicator(),
               ],
             ),
           ),

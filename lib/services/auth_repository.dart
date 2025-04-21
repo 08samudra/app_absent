@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:app_absent/model/login_model.dart';
 import 'package:http/http.dart' as http;
 import 'endpoint.dart';
-import '../model/login_model.dart';
 
 class AuthRepository {
   Future<LoginResponse> login(String email, String password) async {
@@ -46,6 +46,7 @@ class AuthRepository {
     return json.decode(response.body);
   }
 
+  // Tambahkan fungsi checkOut
   Future<Map<String, dynamic>> checkOut(
     String checkOutLat,
     String checkOutLng,

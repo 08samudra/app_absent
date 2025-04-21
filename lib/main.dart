@@ -1,7 +1,9 @@
 import 'package:app_absent/pages_app/absent_page.dart';
+import 'package:app_absent/pages_app/history_absen_page.dart';
 import 'package:app_absent/pages_app/splash_page.dart';
 import 'package:app_absent/providers/absen_provider.dart';
 import 'package:app_absent/providers/edit_porfil_provider.dart';
+import 'package:app_absent/providers/history_absen_provider.dart';
 import 'package:app_absent/providers/home_provider.dart';
 import 'package:app_absent/providers/login_provider.dart';
 import 'package:app_absent/providers/profil_provider.dart';
@@ -29,9 +31,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LoginProvider()),
         ChangeNotifierProvider(create: (context) => ProfileProvider()),
         ChangeNotifierProvider(create: (context) => RegisterProvider()),
+        ChangeNotifierProvider(create: (context) => RiwayatAbsenProvider()),
       ],
       child: MaterialApp(
-        title: 'App Absen',
+        title: 'App Absent',
         theme: ThemeData(primarySwatch: Colors.blue),
         initialRoute: '/splash',
 
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
           '/absen': (context) => AbsentPage(),
           '/edit': (context) => EditProfilePage(),
           '/register': (context) => RegisterPage(),
+          '/history_absen': (context) => RiwayatAbsenPage(),
         },
       ),
     );

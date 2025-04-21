@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:app_absent/model/login_model.dart';
 import 'package:app_absent/services/user_services.dart';
 import 'package:http/http.dart' as http;
 import 'endpoint.dart';
-import '../model/login_model.dart';
 import 'auth_repository.dart';
 
 class AuthService {
@@ -49,6 +49,7 @@ class AuthService {
     return json.decode(response.body);
   }
 
+  // Tambahkan fungsi checkOut
   Future<Map<String, dynamic>> checkOut(
     String checkOutLat,
     String checkOutLng,
@@ -86,12 +87,35 @@ class AuthService {
     return json.decode(response.body);
   }
 
-  Future<Map<String, dynamic>> getAbsenHistory(String startDate) async {
+  // Future<Map<String, dynamic>> getAbsenHistory(String startDate) async {
+  //   final token = await _userService.getToken();
+  //   final response = await http.get(
+  //     Uri.parse(
+  //       Endpoints.baseUrl + Endpoints.absenHistory + '?start=$startDate',
+  //     ),
+  //     headers: {'Authorization': 'Bearer $token'},
+  //   );
+  //   return json.decode(response.body);
+  // }
+
+  Future<Map<String, dynamic>> getAbsenHistory({
+    String? startDate,
+    String? endDate,
+  }) async {
     final token = await _userService.getToken();
+    Uri uri = Uri.parse(Endpoints.baseUrl + Endpoints.absenHistory);
+    if (startDate != null && endDate != null) {
+      uri = uri.replace(
+        queryParameters: {'start_date': startDate, 'end_date': endDate},
+      );
+    } else if (startDate != null) {
+      uri = uri.replace(queryParameters: {'start_date': startDate});
+    } else if (endDate != null) {
+      uri = uri.replace(queryParameters: {'end_date': endDate});
+    }
+
     final response = await http.get(
-      Uri.parse(
-        Endpoints.baseUrl + Endpoints.absenHistory + '?start=$startDate',
-      ),
+      uri,
       headers: {'Authorization': 'Bearer $token'},
     );
     return json.decode(response.body);

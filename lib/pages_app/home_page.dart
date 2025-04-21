@@ -39,6 +39,17 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+            // Tambahkan Riwayat Absen di bawah Profil
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Riwayat Absen'),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/history_absen',
+                ); // Nama route untuk halaman riwayat absen
+              },
+            ),
             //Dockumentasi untuk logout/stay app
             ListTile(
               leading: const Icon(Icons.logout),
