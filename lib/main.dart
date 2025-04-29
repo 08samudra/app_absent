@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'App Absent',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
         initialRoute: '/splash',
 
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/home': (context) => HomePage(),
           '/profile': (context) => ProfilePage(),
-          '/absen': (context) => AbsentPage(),
+          // '/absen': (context) => AbsentPage(),
           '/edit': (context) => EditProfilePage(),
           '/register': (context) => RegisterPage(),
           '/history_absen': (context) => RiwayatAbsenPage(),

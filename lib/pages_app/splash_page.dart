@@ -1,6 +1,6 @@
-// import 'package:app_absent/services/endpoint.dart';
 import 'package:app_absent/services/user_services.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -24,10 +24,8 @@ class _SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (token != null) {
-      // Jika token ada, arahkan ke halaman home
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Jika token tidak ada, arahkan ke halaman login
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
@@ -47,16 +45,12 @@ class _SplashPageState extends State<SplashPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text(
-                  'Selamat Datang di Aplikasi Absen',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
+                Lottie.asset(
+                  'assets/images/lottie_logo1.json',
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 20),
-                // const CircularProgressIndicator(),
               ],
             ),
           ),

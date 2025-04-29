@@ -1,10 +1,12 @@
-import 'package:app_absent/providers/login_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:app_absent/providers/login_provider.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -16,45 +18,51 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: <Widget>[
-          Image.asset(
-            'assets/images/bg_screen3.jpg',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+        children: [
+          // Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bg_screen3.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
+          // Form content
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24),
               child: Card(
-                elevation: 8,
+                elevation: 10,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                color: const Color.fromARGB(255, 255, 255, 255),
+                color: Colors.white.withOpacity(0.95),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(24),
                   child: Form(
                     key: _formKey,
                     child: Consumer<LoginProvider>(
                       builder: (context, loginProvider, child) {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
+                          children: [
                             Text(
-                              'Login',
+                              'Login Absensi',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 105, 200, 212),
+                                color: Colors.teal.shade400,
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 24),
+                            // Email Field
                             TextFormField(
                               controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: 'Email',
-                                border: OutlineInputBorder(),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                prefixIcon: const Icon(Icons.email_outlined),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -63,14 +71,18 @@ class _LoginPageState extends State<LoginPage> {
                                 return null;
                               },
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 16),
+                            // Password Field
                             TextFormField(
                               controller: _passwordController,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'Password',
-                                border: OutlineInputBorder(),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                prefixIcon: const Icon(Icons.lock_outline),
                               ),
-                              obscureText: true,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Password wajib diisi.';
@@ -78,50 +90,69 @@ class _LoginPageState extends State<LoginPage> {
                                 return null;
                               },
                             ),
-                            SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed:
-                                  loginProvider.isLoading
-                                      ? null
-                                      : () {
-                                        if (_formKey.currentState!.validate()) {
-                                          loginProvider.login(
-                                            context,
-                                            _emailController.text,
-                                            _passwordController.text,
-                                          );
-                                        }
-                                      },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey[200],
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 15,
+                            const SizedBox(height: 24),
+                            // Login Button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal.shade400,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                                onPressed:
+                                    loginProvider.isLoading
+                                        ? null
+                                        : () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            loginProvider.login(
+                                              context,
+                                              _emailController.text.trim(),
+                                              _passwordController.text.trim(),
+                                            );
+                                          }
+                                        },
+                                child:
+                                    loginProvider.isLoading
+                                        ? const CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        )
+                                        : const Text(
+                                          'Login',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                               ),
-                              child:
-                                  loginProvider.isLoading
-                                      ? CircularProgressIndicator()
-                                      : Text('Login'),
                             ),
+                            const SizedBox(height: 16),
+                            // Error Message
                             if (loginProvider.errorMessage.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  loginProvider.errorMessage,
-                                  style: TextStyle(color: Colors.red),
+                              Text(
+                                loginProvider.errorMessage,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
                                 ),
                               ),
+                            const SizedBox(height: 12),
+                            // Register Link
                             TextButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/register');
                               },
-                              child: Text(
-                                'Belum punya akun? Registrasi',
-                                style: TextStyle(color: Colors.green),
+                              child: const Text(
+                                'Belum punya akun? Registrasi di sini',
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],

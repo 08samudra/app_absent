@@ -110,7 +110,7 @@ class AbsenProvider with ChangeNotifier {
       String checkInAddress = 'Lokasi Tidak Diketahui';
 
       // Validasi jarak HANYA jika status adalah 'masuk'
-      if (_status == 'masuk') {
+      if (_status == 'Masuk') {
         // Hitung jarak antara lokasi pengguna dan kantor
         double distance = Geolocator.distanceBetween(
           checkInLat,
@@ -127,7 +127,7 @@ class AbsenProvider with ChangeNotifier {
           setLoading(false);
           return;
         }
-      } else if (_status == 'izin' && _alasanIzin.isEmpty) {
+      } else if (_status == 'Izin' && _alasanIzin.isEmpty) {
         setMessage('Alasan izin wajib diisi.');
         setLoading(false);
         return;

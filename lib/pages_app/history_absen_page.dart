@@ -15,13 +15,40 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
   DateTime? _selectedDay;
 
   @override
+  void initState() {
+    super.initState();
+    // Memanggil getHistoryAbsens dengan tanggal hari ini setelah build selesai
+    _selectedDay = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAbsensiData();
+    });
+  }
+
+  // Fungsi untuk mengambil data absensi berdasarkan tanggal yang dipilih
+  void _fetchAbsensiData() {
+    if (_selectedDay != null) {
+      Provider.of<RiwayatAbsenProvider>(
+        context,
+        listen: false,
+      ).getHistoryAbsens(
+        startDate: DateFormat('yyyy-MM-dd').format(_selectedDay!),
+        endDate: DateFormat('yyyy-MM-dd').format(_selectedDay!),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Riwayat Absen')),
+      appBar: AppBar(
+        title: const Text('Riwayat Absen', style: TextStyle(fontSize: 18)),
+        backgroundColor: Colors.teal,
+        elevation: 0,
+      ),
       body: Consumer<RiwayatAbsenProvider>(
         builder: (context, riwayatAbsenProvider, child) {
           if (riwayatAbsenProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (riwayatAbsenProvider.errorMessage.isNotEmpty) {
@@ -30,35 +57,53 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
 
           return Column(
             children: [
-              TableCalendar(
-                firstDay: DateTime.utc(2010, 1, 1),
-                lastDay: DateTime.utc(2030, 12, 31),
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    _selectedDay = selectedDay;
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2010, 1, 1),
+                  lastDay: DateTime.utc(2030, 12, 31),
+                  focusedDay: _focusedDay,
+                  calendarFormat: _calendarFormat,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                    // Ambil data setelah memilih tanggal
+                    _fetchAbsensiData();
+                  },
+                  onFormatChanged: (format) {
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  },
+                  onPageChanged: (focusedDay) {
                     _focusedDay = focusedDay;
-                  });
-                  Provider.of<RiwayatAbsenProvider>(
-                    context,
-                    listen: false,
-                  ).getHistoryAbsens(
-                    startDate: DateFormat('yyyy-MM-dd').format(selectedDay),
-                    endDate: DateFormat('yyyy-MM-dd').format(selectedDay),
-                  );
-                },
-                onFormatChanged: (format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                },
-                onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
-                },
+                  },
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    titleTextStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                    ),
+                  ),
+                  calendarStyle: CalendarStyle(
+                    todayTextStyle: TextStyle(color: Colors.white),
+                    todayDecoration: BoxDecoration(
+                      color: Colors.teal,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedTextStyle: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -66,7 +111,7 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                   _selectedDay == null
                       ? 'Pilih tanggal untuk melihat riwayat'
                       : 'Riwayat absen tanggal: ${DateFormat('dd-MM-yyyy').format(_selectedDay!)}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
               Expanded(
@@ -75,18 +120,92 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                   itemBuilder: (context, index) {
                     final absen = riwayatAbsenProvider.historyAbsens[index];
                     return Card(
-                      margin: EdgeInsets.all(8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Check In: ${absen['check_in'] ?? '-'}'),
-                            Text('Check Out: ${absen['check_out'] ?? '-'}'),
-                            Text('Status: ${absen['status'] ?? '-'}'),
-                            if (absen['alasan_izin'] != null)
-                              Text('Alasan Izin: ${absen['alasan_izin']}'),
-                          ],
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              (absen['status'] == 'izin')
+                                  ? Colors.orange
+                                  : Colors.green,
+                          child: Icon(
+                            (absen['status'] == 'izin')
+                                ? Icons.warning_amber_rounded
+                                : Icons.check,
+                            color: Colors.white,
+                          ),
+                        ),
+                        title: Text(
+                          'Check In: ${absen['check_in'] ?? '-'}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Check Out: ${absen['check_out'] ?? '-'}'),
+                              Text('Status: ${absen['status'] ?? '-'}'),
+                              if (absen['alasan_izin'] != null)
+                                Text('Alasan Izin: ${absen['alasan_izin']}'),
+                            ],
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text('Hapus Absen'),
+                                    content: const Text(
+                                      'Apakah kamu yakin ingin menghapus absen ini?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed:
+                                            () => Navigator.pop(context, false),
+                                        child: const Text('Batal'),
+                                      ),
+                                      TextButton(
+                                        onPressed:
+                                            () => Navigator.pop(context, true),
+                                        child: const Text(
+                                          'Hapus',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            );
+
+                            if (confirm == true) {
+                              try {
+                                await Provider.of<RiwayatAbsenProvider>(
+                                  context,
+                                  listen: false,
+                                ).deleteAbsen(absen['id'].toString());
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Absen berhasil dihapus'),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Gagal menghapus absen: $e'),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
                       ),
                     );

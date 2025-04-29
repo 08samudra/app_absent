@@ -27,8 +27,8 @@ class RiwayatAbsenProvider with ChangeNotifier {
 
   void setHistoryAbsens(List<dynamic> value) {
     _historyAbsens = value;
+    _calculateTotals();
     notifyListeners();
-    _calculateTotals(); // Hitung total setelah mendapatkan riwayat
   }
 
   void _calculateTotals() {
@@ -58,6 +58,21 @@ class RiwayatAbsenProvider with ChangeNotifier {
       setHistoryAbsens([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  Future<void> deleteAbsen(String id) async {
+    try {
+      final response = await _authService.deleteAbsen(id);
+      if (response['data'] != null) {
+        _historyAbsens.removeWhere((absen) => absen['id'].toString() == id);
+        _calculateTotals();
+        notifyListeners();
+      } else {
+        throw Exception(response['message'] ?? 'Gagal menghapus absensi.');
+      }
+    } catch (e) {
+      throw Exception('Terjadi kesalahan saat menghapus absensi: $e');
     }
   }
 }

@@ -11,11 +11,9 @@ class AuthService {
 
   Future<LoginResponse> login(String email, String password) async {
     final loginResponse = await _authRepository.login(email, password);
-
     if (loginResponse.data != null) {
       await _userService.saveToken(loginResponse.data!.token);
     }
-
     return loginResponse;
   }
 
@@ -49,7 +47,6 @@ class AuthService {
     return json.decode(response.body);
   }
 
-  // Tambahkan fungsi checkOut
   Future<Map<String, dynamic>> checkOut(
     String checkOutLat,
     String checkOutLng,
@@ -87,17 +84,6 @@ class AuthService {
     return json.decode(response.body);
   }
 
-  // Future<Map<String, dynamic>> getAbsenHistory(String startDate) async {
-  //   final token = await _userService.getToken();
-  //   final response = await http.get(
-  //     Uri.parse(
-  //       Endpoints.baseUrl + Endpoints.absenHistory + '?start=$startDate',
-  //     ),
-  //     headers: {'Authorization': 'Bearer $token'},
-  //   );
-  //   return json.decode(response.body);
-  // }
-
   Future<Map<String, dynamic>> getAbsenHistory({
     String? startDate,
     String? endDate,
@@ -116,6 +102,15 @@ class AuthService {
 
     final response = await http.get(
       uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    return json.decode(response.body);
+  }
+
+  Future<Map<String, dynamic>> deleteAbsen(String id) async {
+    final token = await _userService.getToken();
+    final response = await http.delete(
+      Uri.parse('https://absen.quidi.id/api/absen/$id'),
       headers: {'Authorization': 'Bearer $token'},
     );
     return json.decode(response.body);
