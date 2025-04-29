@@ -271,11 +271,13 @@ class _HomePageState extends State<HomePage> {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
-                            value,
+                            value[0].toUpperCase() +
+                                value.substring(1), // Kapital awal
                             style: const TextStyle(fontSize: 16),
                           ),
                         );
                       }).toList(),
+
                   onChanged: (value) {
                     if (value != null) {
                       absenProvider.setStatus(value);
