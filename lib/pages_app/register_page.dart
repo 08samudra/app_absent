@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:app_absent/providers/register_provider.dart';
 
@@ -45,6 +46,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            SizedBox(
+                              height: 120,
+                              child: Lottie.asset(
+                                'assets/images/lottie_logo1.json',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                             Text(
                               'Registrasi Akun',
                               style: TextStyle(
@@ -141,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           strokeWidth: 2,
                                         )
                                         : const Text(
-                                          'Registrasi',
+                                          'Daftar',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -169,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: const Text(
                                 'Sudah punya akun? Login di sini',
                                 style: TextStyle(
-                                  color: Colors.teal,
+                                  color: Color.fromARGB(255, 212, 132, 12),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

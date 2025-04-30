@@ -1,4 +1,6 @@
+// import tetap sama
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:app_absent/providers/login_provider.dart';
 
@@ -19,14 +21,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
           Positioned.fill(
             child: Image.asset(
               'assets/images/bg_screen3.jpg',
               fit: BoxFit.cover,
             ),
           ),
-          // Form content
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
@@ -45,8 +45,16 @@ class _LoginPageState extends State<LoginPage> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // ✅ Animasi
+                            SizedBox(
+                              height: 120,
+                              child: Lottie.asset(
+                                'assets/images/lottie_logo1.json',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                             Text(
-                              'Login Absensi',
+                              'Hallo, Selamat Datang',
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -54,7 +62,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            // Email Field
                             TextFormField(
                               controller: _emailController,
                               decoration: InputDecoration(
@@ -64,15 +71,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 prefixIcon: const Icon(Icons.email_outlined),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Email wajib diisi.';
-                                }
-                                return null;
-                              },
+                              validator:
+                                  (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Email wajib diisi.'
+                                          : null,
                             ),
                             const SizedBox(height: 16),
-                            // Password Field
                             TextFormField(
                               controller: _passwordController,
                               obscureText: true,
@@ -83,15 +88,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 prefixIcon: const Icon(Icons.lock_outline),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Password wajib diisi.';
-                                }
-                                return null;
-                              },
+                              validator:
+                                  (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Password wajib diisi.'
+                                          : null,
                             ),
                             const SizedBox(height: 24),
-                            // Login Button
                             SizedBox(
                               width: double.infinity,
                               height: 50,
@@ -121,18 +124,23 @@ class _LoginPageState extends State<LoginPage> {
                                           color: Colors.white,
                                           strokeWidth: 2,
                                         )
-                                        : const Text(
-                                          'Login',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                        : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              'Login',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                               ),
                             ),
                             const SizedBox(height: 16),
-                            // Error Message
                             if (loginProvider.errorMessage.isNotEmpty)
                               Text(
                                 loginProvider.errorMessage,
@@ -141,8 +149,6 @@ class _LoginPageState extends State<LoginPage> {
                                   fontSize: 14,
                                 ),
                               ),
-                            const SizedBox(height: 12),
-                            // Register Link
                             TextButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/register');
@@ -150,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 'Belum punya akun? Registrasi di sini',
                                 style: TextStyle(
-                                  color: Colors.teal,
+                                  color: Color.fromARGB(255, 212, 132, 12),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

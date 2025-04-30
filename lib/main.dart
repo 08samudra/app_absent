@@ -1,4 +1,3 @@
-import 'package:app_absent/pages_app/absent_page.dart';
 import 'package:app_absent/pages_app/history_absen_page.dart';
 import 'package:app_absent/pages_app/splash_page.dart';
 import 'package:app_absent/providers/absen_provider.dart';
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/home': (context) => HomePage(),
           '/profile': (context) => ProfilePage(),
-          // '/absen': (context) => AbsentPage(),
           '/edit': (context) => EditProfilePage(),
           '/register': (context) => RegisterPage(),
           '/history_absen': (context) => RiwayatAbsenPage(),
