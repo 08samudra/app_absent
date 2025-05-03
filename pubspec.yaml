@@ -51,6 +51,7 @@ flutter:
   assets:
     - assets/images/bg_screen3.jpg
     - assets/images/absent.png
+    - assets/images/logo_ppkd.png
     - assets/images/lottie_logo1.json
     
 

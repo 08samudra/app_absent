@@ -1,4 +1,3 @@
-// import 'package:app_absent/services/auth_service.dart';
 import 'package:app_absent/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -76,6 +75,12 @@ class AbsenProvider with ChangeNotifier {
 
   void setIsCheckOutEnabled(bool value) {
     _isCheckOutEnabled = value;
+    notifyListeners();
+  }
+
+  void clearMessages() {
+    _message = '';
+    _checkOutMessage = '';
     notifyListeners();
   }
 

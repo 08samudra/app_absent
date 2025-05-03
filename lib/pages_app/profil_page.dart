@@ -1,5 +1,5 @@
 import 'package:app_absent/pages_app/edit_page.dart';
-import 'package:app_absent/providers/history_absen_provider.dart';
+import 'package:app_absent/providers/history_absent_provider.dart';
 import 'package:app_absent/providers/profil_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil Pengguna')),
+      appBar: AppBar(
+        title: const Text('Profil Pengguna', style: TextStyle(fontSize: 18)),
+        backgroundColor: Color(0xFF7AE2CF),
+      ),
       body: Consumer<ProfileProvider>(
         builder: (context, profileProvider, child) {
           print('Consumer<ProfileProvider> membangun...'); // Tambahkan print

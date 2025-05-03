@@ -1,4 +1,4 @@
-import 'package:app_absent/providers/history_absen_provider.dart';
+import 'package:app_absent/providers/history_absent_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -41,8 +41,8 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Absen', style: TextStyle(fontSize: 18)),
-        backgroundColor: Colors.teal,
+        title: const Text('Riwayat Absensi', style: TextStyle(fontSize: 18)),
+        backgroundColor: Color(0xFF7AE2CF),
         elevation: 0,
       ),
       body: Consumer<RiwayatAbsenProvider>(
@@ -88,7 +88,7 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                     titleTextStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.teal,
+                      color: Color(0xFF077A7D),
                     ),
                   ),
                   calendarStyle: CalendarStyle(
@@ -193,14 +193,28 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                                   listen: false,
                                 ).deleteAbsen(absen['id'].toString());
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Absen berhasil dihapus'),
+                                  SnackBar(
+                                    content: const Text(
+                                      textAlign: TextAlign.center,
+                                      'Absen berhasil dihapus',
+                                      style: TextStyle(
+                                        color: Color(0xFF06202B),
+                                      ),
+                                    ),
+                                    backgroundColor: Color(0xFF7AE2CF),
                                   ),
                                 );
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Gagal menghapus absen: $e'),
+                                    content: Text(
+                                      textAlign: TextAlign.center,
+                                      'Gagal menghapus absen: $e',
+                                      style: const TextStyle(
+                                        color: Color(0xFF06202B),
+                                      ),
+                                    ),
+                                    backgroundColor: Color(0xFFF75A5A),
                                   ),
                                 );
                               }
