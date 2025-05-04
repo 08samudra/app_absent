@@ -5,6 +5,9 @@ class LocationMap extends StatelessWidget {
   final Future<LatLng?> locationFuture;
   final Function(GoogleMapController) onMapCreated;
 
+  static const LatLng kantorLocation = LatLng(-6.210881, 106.812942);
+  static const double allowedRadius = 100;
+
   const LocationMap({
     super.key,
     required this.locationFuture,
@@ -16,7 +19,7 @@ class LocationMap extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Container(
+      child: SizedBox(
         height: 250,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -30,18 +33,51 @@ class LocationMap extends StatelessWidget {
                   child: Text('Gagal mendapatkan lokasi: ${snapshot.error}'),
                 );
               } else if (snapshot.data != null) {
+                final userLocation = snapshot.data!;
+                final bool isSameLocation =
+                    (userLocation.latitude - kantorLocation.latitude).abs() <
+                        0.00005 &&
+                    (userLocation.longitude - kantorLocation.longitude).abs() <
+                        0.00005;
+
                 return GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: snapshot.data!,
+                    target: userLocation,
                     zoom: 15,
                   ),
                   markers: {
                     Marker(
-                      markerId: MarkerId('currentLocation'),
-                      position: snapshot.data!,
+                      markerId: const MarkerId('kantor'),
+                      position: kantorLocation,
+                      infoWindow: const InfoWindow(title: 'Lokasi Kantor'),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed,
+                      ),
+                    ),
+                    if (!isSameLocation)
+                      Marker(
+                        markerId: const MarkerId('user'),
+                        position: userLocation,
+                        infoWindow: const InfoWindow(title: 'Lokasi Anda'),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueAzure,
+                        ),
+                      ),
+                  },
+
+                  circles: {
+                    Circle(
+                      circleId: const CircleId('absenRadius'),
+                      center: kantorLocation,
+                      radius: allowedRadius,
+                      fillColor: Colors.blue.withOpacity(0.2),
+                      strokeColor: Colors.blue,
+                      strokeWidth: 2,
                     ),
                   },
                   onMapCreated: onMapCreated,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
                 );
               } else {
                 return const Center(child: Text('Lokasi belum tersedia.'));

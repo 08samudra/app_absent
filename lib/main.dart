@@ -1,5 +1,5 @@
-import 'package:app_absent/pages_app/history_absen_page.dart';
-import 'package:app_absent/pages_app/splash_page.dart';
+import 'package:app_absent/pages/history_absen_page.dart';
+import 'package:app_absent/pages/splash_page.dart';
 import 'package:app_absent/providers/absent_provider.dart';
 import 'package:app_absent/providers/edit_porfil_provider.dart';
 import 'package:app_absent/providers/history_absent_provider.dart';
@@ -9,12 +9,14 @@ import 'package:app_absent/providers/profil_provider.dart';
 import 'package:app_absent/providers/register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'pages_app/home_page.dart';
-import 'pages_app/profil_page.dart';
-import 'pages_app/edit_page.dart';
-import 'pages_app/login_page.dart';
-import 'pages_app/register_page.dart';
+import 'pages/home_page.dart';
+import 'pages/profil_page.dart';
+import 'pages/edit_page.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 void main() {
   runApp(MyApp());
 }
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'App Absent',
         debugShowCheckedModeBanner: false,
+        scaffoldMessengerKey: scaffoldMessengerKey,
         theme: ThemeData(primarySwatch: Colors.blue),
         initialRoute: '/splash',
 

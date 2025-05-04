@@ -8,6 +8,11 @@ class ProfileProvider with ChangeNotifier {
   String _errorMessage = '';
 
   Map<String, dynamic> get profileData => _profileData;
+  set profileData(Map<String, dynamic> value) {
+    _profileData = value;
+    notifyListeners();
+  }
+
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
 
@@ -26,18 +31,21 @@ class ProfileProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchProfile(BuildContext context) async {
+  Future<void> fetchProfile() async {
     setLoading(true);
     try {
       final response = await _authService.getProfile();
       setProfileData(response['data']);
+      setErrorMessage(''); // Clear error if success
     } catch (e) {
       setErrorMessage('Gagal memuat profil: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Gagal memuat profil: $e')));
     } finally {
       setLoading(false);
     }
+  }
+
+  Future<void> logout() async {
+    profileData = {};
+    notifyListeners();
   }
 }

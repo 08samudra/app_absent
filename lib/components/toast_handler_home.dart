@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/absent_provider.dart';
+import '../main.dart'; // pastikan import ini untuk scaffoldMessengerKey
 
 void setupToastHandler(BuildContext context) {
   final absenProvider = Provider.of<AbsenProvider>(context, listen: false);
@@ -13,7 +14,6 @@ void setupToastHandler(BuildContext context) {
           absenProvider.message.toLowerCase().contains('wajib diisi');
 
       showSnackBar(
-        context,
         absenProvider.message,
         isError ? Colors.orange : const Color(0xFF7AE2CF),
       );
@@ -26,7 +26,6 @@ void setupToastHandler(BuildContext context) {
       );
 
       showSnackBar(
-        context,
         absenProvider.checkOutMessage,
         isError ? Colors.orange : const Color(0xFFF75A5A),
       );
@@ -35,16 +34,19 @@ void setupToastHandler(BuildContext context) {
   });
 }
 
-void showSnackBar(BuildContext context, String message, Color bgColor) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: Color(0xFF06202B)),
+void showSnackBar(String message, Color bgColor) {
+  final messenger = scaffoldMessengerKey.currentState;
+  if (messenger != null) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xFF06202B)),
+        ),
+        backgroundColor: bgColor,
+        duration: const Duration(seconds: 3),
       ),
-      backgroundColor: bgColor,
-      duration: const Duration(seconds: 3),
-    ),
-  );
+    );
+  }
 }

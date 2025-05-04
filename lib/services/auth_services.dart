@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:app_absent/model/login_model.dart';
 import 'package:app_absent/services/user_services.dart';
 import 'package:http/http.dart' as http;
-import 'endpoint.dart';
+import 'endpoints.dart';
 import 'auth_repository.dart';
 
 class AuthService {
@@ -110,7 +110,7 @@ class AuthService {
   Future<Map<String, dynamic>> deleteAbsen(String id) async {
     final token = await _userService.getToken();
     final response = await http.delete(
-      Uri.parse('https://absen.quidi.id/api/absen/$id'),
+      Uri.parse("${Endpoints.baseUrl}/api/absen/$id"),
       headers: {'Authorization': 'Bearer $token'},
     );
     return json.decode(response.body);

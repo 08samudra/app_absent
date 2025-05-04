@@ -53,6 +53,8 @@ class _HomePageState extends State<HomePage> {
               ? Center(child: Text('Error: ${homeProvider.errorMessage}'))
               : homeProvider.profileData.isEmpty
               ? const Center(child: Text('Data profil tidak tersedia.'))
+              : _locationFuture == null
+              ? const Center(child: CircularProgressIndicator()) // ⬅️ Tambahan
               : buildContent(context, homeProvider),
     );
   }
@@ -103,7 +105,6 @@ class _HomePageState extends State<HomePage> {
                   text: 'Riwayat Absensi',
                   onTap: () => Navigator.pushNamed(context, '/history_absen'),
                 ),
-                SizedBox(height: 360),
                 DrawerCardItem(
                   icon: Icons.logout,
                   text: 'Logout',
@@ -139,6 +140,7 @@ class _HomePageState extends State<HomePage> {
             locationFuture: _locationFuture!,
             onMapCreated: absenProvider.setMapController,
           ),
+
           const SizedBox(height: 20),
           const Text(
             'Status Absensi',

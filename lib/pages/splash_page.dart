@@ -1,6 +1,8 @@
 import 'package:app_absent/services/user_services.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import '../providers/profil_provider.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,15 +17,22 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _checkToken();
+    // Menunggu context tersedia
+    Future.microtask(() => _checkToken());
   }
 
   Future<void> _checkToken() async {
     final String? token = await _userService.getToken();
+    final profileProvider = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
 
     await Future.delayed(const Duration(seconds: 2));
 
     if (token != null) {
+      // Panggil fetch profile sebelum masuk ke home
+      await profileProvider.fetchProfile();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       Navigator.pushReplacementNamed(context, '/login');

@@ -1,4 +1,4 @@
-import 'package:app_absent/pages_app/edit_page.dart';
+import 'package:app_absent/pages/edit_page.dart';
 import 'package:app_absent/providers/history_absent_provider.dart';
 import 'package:app_absent/providers/profil_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +14,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProfileProvider>(
-        context,
-        listen: false,
-      ).fetchProfile(context);
+      Provider.of<ProfileProvider>(context, listen: false).fetchProfile();
       Provider.of<RiwayatAbsenProvider>(
         context,
         listen: false,
@@ -27,10 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _reloadProfile() async {
     print('Memuat ulang profil...'); // Tambahkan print
-    await Provider.of<ProfileProvider>(
-      context,
-      listen: false,
-    ).fetchProfile(context);
+    await Provider.of<ProfileProvider>(context, listen: false).fetchProfile();
     print('Profil selesai dimuat ulang.'); // Tambahkan print
   }
 
@@ -38,7 +32,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil Pengguna', style: TextStyle(fontSize: 18)),
+        title: const Text(
+          'Profil Pengguna',
+          style: TextStyle(fontSize: 20, color: Color(0xFF06202B)),
+        ),
         backgroundColor: Color(0xFF7AE2CF),
       ),
       body: Consumer<ProfileProvider>(
@@ -159,20 +156,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     onPressed: () async {
-                      print('Tombol Edit Ditekan'); // Tambahkan print
                       final updated = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditProfilePage(),
                         ),
                       );
-                      print(
-                        'Kembali dari Edit Page dengan hasil: $updated',
-                      ); // Tambahkan print
                       if (updated == true) {
-                        _reloadProfile(); // Muat ulang profil jika ada perubahan
+                        _reloadProfile(); // Memuat ulang data profil setelah berhasil update
                       }
                     },
+
                     child: const Text(
                       'Edit Profil',
                       style: TextStyle(fontSize: 18, color: Colors.white),

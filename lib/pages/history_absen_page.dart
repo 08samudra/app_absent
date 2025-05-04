@@ -41,7 +41,10 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Absensi', style: TextStyle(fontSize: 18)),
+        title: const Text(
+          'Riwayat Absensi',
+          style: TextStyle(fontSize: 20, color: Color(0xFF06202B)),
+        ),
         backgroundColor: Color(0xFF7AE2CF),
         elevation: 0,
       ),
@@ -192,6 +195,9 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                                   context,
                                   listen: false,
                                 ).deleteAbsen(absen['id'].toString());
+
+                                if (!mounted) return;
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: const Text(
@@ -205,6 +211,8 @@ class _RiwayatAbsenPageState extends State<RiwayatAbsenPage> {
                                   ),
                                 );
                               } catch (e) {
+                                if (!mounted) return;
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(

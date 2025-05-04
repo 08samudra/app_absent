@@ -1,27 +1,25 @@
+import 'package:app_absent/geolocator/geo_service.dart';
 import 'package:app_absent/services/auth_services.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AbsenProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
+  final LocationService _locationService = LocationService();
+
   bool _isLoading = false;
   String _status = 'masuk';
   String _alasanIzin = '';
   LatLng? _currentLocation;
   GoogleMapController? _mapController;
   String _message = '';
-  bool _isCheckOutLoading = false; // Tambahkan loading state untuk check out
-  String _checkOutMessage = ''; // Tambahkan pesan untuk check out
-  bool _isCheckOutEnabled = false; // State untuk mengontrol tombol check out
+  bool _isCheckOutLoading = false;
+  String _checkOutMessage = '';
+  bool _isCheckOutEnabled = false;
 
-  // Koordinat kantor (ganti dengan koordinat sebenarnya)
-  static const double kantorLatitude =
-      -6.210881; // Ganti dengan latitude kantor Anda
-  static const double kantorLongitude =
-      106.812942; // Ganti dengan longitude kantor Anda
-  static const double allowedRadius =
-      100; // Radius dalam meter (misalnya 100 meter)
+  static const double kantorLatitude = -6.210881;
+  static const double kantorLongitude = 106.812942;
+  static const double allowedRadius = 100000;
 
   bool get isLoading => _isLoading;
   String get status => _status;
@@ -85,70 +83,60 @@ class AbsenProvider with ChangeNotifier {
   }
 
   Future<LatLng?> getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+    final granted = await _locationService.requestLocationPermission();
+    if (!granted) {
+      setMessage(
+        'Izin lokasi ditolak. Silakan aktifkan secara manual di pengaturan.',
       );
-      setCurrentLocation(LatLng(position.latitude, position.longitude));
-      // Setelah mendapatkan lokasi, aktifkan tombol check out
-      setIsCheckOutEnabled(true);
-      return LatLng(position.latitude, position.longitude);
-    } catch (e) {
-      print('Error getting location: $e');
-      setIsCheckOutEnabled(
-        false,
-      ); // Nonaktifkan tombol jika gagal mendapatkan lokasi
+      setIsCheckOutEnabled(false);
       return null;
     }
+
+    final location = await _locationService.getCurrentLocation();
+    setCurrentLocation(location);
+    setIsCheckOutEnabled(location != null);
+    return location;
   }
 
   Future<void> checkIn(BuildContext context) async {
     setLoading(true);
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+      final location = await _locationService.getCurrentLocation();
+      if (location == null) {
+        setMessage('Gagal mendapatkan lokasi');
+        setLoading(false);
+        return;
+      }
+
+      double distance = _locationService.calculateDistance(
+        location,
+        const LatLng(kantorLatitude, kantorLongitude),
       );
 
-      double checkInLat = position.latitude;
-      double checkInLng = position.longitude;
-      String checkInAddress = 'Lokasi Tidak Diketahui';
-
-      // Validasi jarak HANYA jika status adalah 'masuk'
-      if (_status == 'Masuk') {
-        // Hitung jarak antara lokasi pengguna dan kantor
-        double distance = Geolocator.distanceBetween(
-          checkInLat,
-          checkInLng,
-          kantorLatitude,
-          kantorLongitude,
+      if (_status.toLowerCase() == 'masuk' && distance > allowedRadius) {
+        setMessage(
+          'Anda berada di luar radius absensi. Jarak: ${distance.toStringAsFixed(2)} m.',
         );
+        setLoading(false);
+        return;
+      }
 
-        // Validasi jarak
-        if (distance > allowedRadius) {
-          setMessage(
-            'Anda berada di luar radius absensi yang diperbolehkan (${allowedRadius} meter). Jarak Anda: ${distance.toStringAsFixed(2)} meter.',
-          );
-          setLoading(false);
-          return;
-        }
-      } else if (_status == 'Izin' && _alasanIzin.isEmpty) {
+      if (_status.toLowerCase() == 'izin' && _alasanIzin.isEmpty) {
         setMessage('Alasan izin wajib diisi.');
         setLoading(false);
         return;
       }
 
-      Map<String, dynamic> response;
-      response = await _authService.checkIn(
-        checkInLat.toString(),
-        checkInLng.toString(),
-        checkInAddress,
+      final response = await _authService.checkIn(
+        location.latitude.toString(),
+        location.longitude.toString(),
+        'Lokasi Tidak Diketahui',
         _status,
-        alasanIzin: _status == 'izin' ? _alasanIzin : null,
+        alasanIzin: _status.toLowerCase() == 'izin' ? _alasanIzin : null,
       );
 
       setMessage(response['message']);
-      // Setelah berhasil check in, mungkin perlu memperbarui UI atau state
     } catch (e) {
       setMessage('Terjadi kesalahan: $e');
     } finally {
@@ -156,28 +144,25 @@ class AbsenProvider with ChangeNotifier {
     }
   }
 
-  // Tambahkan fungsi checkOutProcess
   Future<void> checkOutProcess(BuildContext context) async {
     setCheckOutLoading(true);
-    setCheckOutMessage(''); // Reset pesan check out
+    setCheckOutMessage('');
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      double checkOutLat = position.latitude;
-      double checkOutLng = position.longitude;
-      String checkOutAddress = 'Lokasi Tidak Diketahui';
+      final location = await _locationService.getCurrentLocation();
+      if (location == null) {
+        setCheckOutMessage('Gagal mendapatkan lokasi');
+        setCheckOutLoading(false);
+        return;
+      }
 
       final response = await _authService.checkOut(
-        checkOutLat.toString(),
-        checkOutLng.toString(),
-        checkOutAddress,
+        location.latitude.toString(),
+        location.longitude.toString(),
+        'Lokasi Tidak Diketahui',
       );
 
       setCheckOutMessage(response['message']);
-      // Mungkin perlu memperbarui UI atau state setelah berhasil check out
     } catch (e) {
       setCheckOutMessage('Terjadi kesalahan saat check out: $e');
     } finally {
