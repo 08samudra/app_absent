@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:app_absent/model/login_model.dart';
 import 'package:http/http.dart' as http;
-import 'endpoints.dart';
+import '../endpoint/endpoints.dart';
 
 class AuthRepository {
   Future<LoginResponse> login(String email, String password) async {
@@ -22,8 +22,31 @@ class AuthRepository {
     final response = await http.post(
       Uri.parse(Endpoints.baseUrl + Endpoints.register),
       body: {'name': name, 'email': email, 'password': password},
+      headers: {
+        'Accept': 'application/json',
+      }, // penting agar Laravel tidak kirim HTML
     );
-    return json.decode(response.body);
+
+    try {
+      final decoded = json.decode(response.body);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      } else {
+        return {
+          'message': 'Response tidak sesuai format yang diharapkan.',
+          'errors': {
+            'response': ['Unexpected response format.'],
+          },
+        };
+      }
+    } catch (e) {
+      return {
+        'message': 'Terjadi kesalahan saat memproses response.',
+        'errors': {
+          'exception': [e.toString()],
+        },
+      };
+    }
   }
 
   Future<Map<String, dynamic>> checkIn(

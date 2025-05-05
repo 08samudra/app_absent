@@ -1,5 +1,5 @@
-import 'package:app_absent/pages/history_absen_page.dart';
-import 'package:app_absent/pages/splash_page.dart';
+import 'package:app_absent/pages/history/history_absen_page.dart';
+import 'package:app_absent/pages/login_register/splash_page.dart';
 import 'package:app_absent/providers/absent_provider.dart';
 import 'package:app_absent/providers/edit_porfil_provider.dart';
 import 'package:app_absent/providers/history_absent_provider.dart';
@@ -9,11 +9,11 @@ import 'package:app_absent/providers/profil_provider.dart';
 import 'package:app_absent/providers/register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'pages/home_page.dart';
-import 'pages/profil_page.dart';
-import 'pages/edit_page.dart';
-import 'pages/login_page.dart';
-import 'pages/register_page.dart';
+import 'pages/home/home_page.dart';
+import 'pages/profile/profil_page.dart';
+import 'pages/profile/edit_profile/edit_page.dart';
+import 'pages/login_register/login_page.dart';
+import 'pages/login_register/register_page.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();

@@ -1,6 +1,6 @@
+import 'package:app_absent/providers/absent_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/absent_provider.dart';
 
 class CheckInOutButtons extends StatelessWidget {
   @override

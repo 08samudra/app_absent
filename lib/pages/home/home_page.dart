@@ -3,13 +3,13 @@ import 'package:app_absent/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:app_absent/components/digital_clock_home.dart';
-import 'package:app_absent/components/location_map_home.dart';
-import 'package:app_absent/components/check_in_out_buttons_home.dart';
-import 'package:app_absent/components/status_dropdown_home.dart';
-import 'package:app_absent/components/toast_handler_home.dart';
-import 'package:app_absent/components/user_card_home.dart';
-import 'package:app_absent/components/drawer_home.dart';
+import 'package:app_absent/pages/home/widgets/digital_clock_home.dart';
+import 'package:app_absent/pages/home/widgets/location_map_home.dart';
+import 'package:app_absent/pages/home/widgets/check_in_out_buttons_home.dart';
+import 'package:app_absent/pages/home/widgets/status_dropdown_home.dart';
+import 'package:app_absent/pages/home/widgets/toast_handler_home.dart';
+import 'package:app_absent/pages/home/widgets/user_card_home.dart';
+import 'package:app_absent/pages/home/widgets/drawer_home.dart';
 
 class HomePage extends StatefulWidget {
   @override

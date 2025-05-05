@@ -34,7 +34,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/absent.png"
+  image_path: "assets/images/logo_app.png"
   
   min_sdk_android: 21 # android min sdk min:16, default 21
 
@@ -52,6 +52,7 @@ flutter:
     - assets/images/bg_screen3.jpg
     - assets/images/absent.png
     - assets/images/logo_ppkd.png
+    - assets/images/logo_app.png
     - assets/images/lottie_logo1.json
     
 

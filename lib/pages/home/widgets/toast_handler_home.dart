@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/absent_provider.dart';
-import '../main.dart'; // pastikan import ini untuk scaffoldMessengerKey
+import '../../../providers/absent_provider.dart';
+import '../../../main.dart'; // pastikan import ini untuk scaffoldMessengerKey
 
 void setupToastHandler(BuildContext context) {
   final absenProvider = Provider.of<AbsenProvider>(context, listen: false);

@@ -1,4 +1,4 @@
-import 'package:app_absent/services/auth_services.dart';
+import 'package:app_absent/services/auth/auth_services.dart';
 import 'package:flutter/material.dart';
 
 class RiwayatAbsenProvider with ChangeNotifier {

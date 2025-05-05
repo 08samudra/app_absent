@@ -1,5 +1,5 @@
-import 'package:app_absent/pages/splash_page.dart';
-import 'package:app_absent/services/auth_services.dart';
+import 'package:app_absent/pages/login_register/splash_page.dart';
+import 'package:app_absent/services/auth/auth_services.dart';
 import 'package:app_absent/providers/profil_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

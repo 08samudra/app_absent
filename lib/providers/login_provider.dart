@@ -1,5 +1,5 @@
 // import 'package:app_absent/services/auth_service.dart';
-import 'package:app_absent/services/auth_services.dart';
+import 'package:app_absent/services/auth/auth_services.dart';
 import 'package:app_absent/model/login_model.dart';
 import 'package:flutter/material.dart';
 

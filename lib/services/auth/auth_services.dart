@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:app_absent/model/login_model.dart';
-import 'package:app_absent/services/user_services.dart';
+import 'package:app_absent/services/auth/user_services.dart';
 import 'package:http/http.dart' as http;
-import 'endpoints.dart';
+import '../endpoint/endpoints.dart';
 import 'auth_repository.dart';
 
 class AuthService {
